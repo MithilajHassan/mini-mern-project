@@ -14,7 +14,18 @@ const userSchema = new Schema({
     password:{
         type:String,
         required:true
-    }
+    },
+    profilePic:{
+        type:String,
+    },
+    isAdmin:{
+        type:Boolean,
+        default:false
+    },
+    isBlock:{
+        type:Boolean,
+        default:false
+    },
 },{
     timestamps:true
 })

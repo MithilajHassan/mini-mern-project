@@ -13,6 +13,7 @@ const loginUser = asyncHandler(async (req,res)=>{
             _id: user._id,
             name: user.name,
             email: user.email,
+            profilePic: user.profilePic,
         })
     }else{
         res.status(401)
@@ -73,21 +74,28 @@ const getUserProfile = asyncHandler(async (req, res)=>{
 
 
 const updateUserProfile = asyncHandler(async (req, res)=>{
-    const { name, email } = req.body
-    const user = await User.findById(req.user._id)
+    const { _id, name, email, image } = req.body
+    const user = await User.findById(_id)
+
+    if (user.email !== email) {
+        const userExists = await User.findOne({email})
+        if(userExists){
+            res.status(400)
+            throw new Error(`User already exists`)
+        }
+    }
 
     if(user){
         user.name = name || user.name
         user.email = email || user.email
-        if(req.body.password){
-            user.password = req.body.password
-        }
+        image ? user.profilePic = image : ''
         const updatedUser = await user.save()
 
         res.status(200).json({
             _id: updatedUser._id,
             name:updatedUser.name,
-            email: updatedUser.email
+            email: updatedUser.email,
+            profilePic: updatedUser.profilePic
         })
     }else{
         res.status(404)

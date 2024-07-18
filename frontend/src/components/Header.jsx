@@ -20,7 +20,7 @@ function Header() {
       dispatch(logout())
       navigate('/')
     } catch (err) {
-      
+      alert(err.message)
     }
   }
 

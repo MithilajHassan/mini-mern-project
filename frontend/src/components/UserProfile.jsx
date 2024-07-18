@@ -1,12 +1,27 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import FormContainer from './FormContainer'
 import { Button, Form, Image } from 'react-bootstrap'
-import { Link } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+import { Link, useNavigate } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
 import defaultAvatar from '/img/defaultAvatar.jpg'
+import { useGetUserMutation, useLogoutMutation } from '../slices/userApiSlice'
+import { logout } from '../slices/authSlice'
 
 function userProfile() {
-   const { userInfo } = useSelector((state)=>state.auth)
+    const dispatch = useDispatch()
+    const navigate = useNavigate()
+    const { userInfo } = useSelector((state)=>state.auth)
+    const [ logoutApiCall ] = useLogoutMutation()
+    const [ getUser ] = useGetUserMutation()
+    useEffect(()=>{
+        getUser().unwrap().then((res)=>{ 
+    }).catch((e)=>{
+        logoutApiCall().unwrap().then((res)=>{
+            dispatch(logout())
+            navigate('/')
+        })  
+    })
+   },[])
   return (
     <>
     <FormContainer>

@@ -8,13 +8,18 @@ const loginUser = asyncHandler(async (req,res)=>{
 
     const user = await User.findOne({email})
     if(user && (await user.matchPassword(password))){
-        generateToken(res, user._id)
-        res.status(201).json({
-            _id: user._id,
-            name: user.name,
-            email: user.email,
-            profilePic: user.profilePic,
-        })
+        if(user.isBlock){
+            throw new Error('Your Account is blocked')
+        }else{
+            generateToken(res, user._id,user.isAdmin)
+            res.status(201).json({
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                profilePic: user.profilePic,
+            })
+        }
+        
     }else{
         res.status(401)
         throw new Error('Invalid email or password')
@@ -55,21 +60,24 @@ const logoutUser = asyncHandler(async (req, res)=>{
     res.cookie('jwt','',{
         httpOnly:true,
         expires: new Date(0),
-
     })
     res.status(200).json({ message: "User logged out"})
 })
 
 
 const getUserProfile = asyncHandler(async (req, res)=>{
-    const { _id, name, email } = req.user
-    const user = {
+    const { _id, name, email, isBlock } = req.user
+    if(isBlock){
+        
+        throw new Error('Your account is blocked')
+    }else{
+       const user = {
         _id,
         name,
-        email
+        email,
+    } 
+    res.status(200).json({user})
     }
-
-    res.status(200).json(user)
 })
 
 

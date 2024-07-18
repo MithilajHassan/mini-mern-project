@@ -6,8 +6,8 @@ import { Link, useNavigate } from 'react-router-dom'
 import { toast ,ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { useDispatch, useSelector } from 'react-redux'
-import { useUpdateUserMutation } from '../slices/userApiSlice'
-import { setCredentials } from '../slices/authSlice'
+import { useGetUserMutation, useLogoutMutation, useUpdateUserMutation } from '../slices/userApiSlice'
+import { logout, setCredentials } from '../slices/authSlice'
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 import { firebaseStore } from '../config/firbaseConfig'
 
@@ -15,12 +15,22 @@ function userProfileEdit() {
     const [name,setName] = useState('')
     const [email,setEmail] = useState('')
     const [image,setImage] = useState(null)
-
+    const [ logoutApiCall ] = useLogoutMutation()
+    const [ getUser ] = useGetUserMutation()
 
     const navigate = useNavigate()
     const dispatch = useDispatch()
     const [ updateProfile ] = useUpdateUserMutation()
     const { userInfo } = useSelector((state)=> state.auth)
+    useEffect(()=>{
+        getUser().unwrap().then((res)=>{ 
+    }).catch((e)=>{
+        logoutApiCall().unwrap().then((res)=>{
+            dispatch(logout())
+            navigate('/')
+        })  
+    })
+   },[])
     useEffect(()=>{
         setName(userInfo.name)
         setEmail(userInfo.email)

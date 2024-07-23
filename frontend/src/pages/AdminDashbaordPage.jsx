@@ -1,18 +1,17 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import AdminHeader from '../components/AdminComponents/AdminHeader'
 import { Button, Container, Table } from 'react-bootstrap'
 import { useDashboardMutation, useManageBlockMutation } from '../slices/adminApiSlice'
 import { ToastContainer,toast } from 'react-toastify'
-import { useNavigate } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import 'react-toastify/dist/ReactToastify.css'
+import { setUsers } from '../slices/usersSlice'
 
 function AdminDashbaordPage() {
     const [ getUsers ] = useDashboardMutation()
     const [ manageBlock ] = useManageBlockMutation()
-    const [users,setUsers] = useState([])
-    
-    const navigate = useNavigate()
+    const { users } = useSelector((state)=>state.usersDetails)
+    const dispatch = useDispatch()
     
     const blockUser = async(_id,status)=>{
         try {
@@ -20,7 +19,7 @@ function AdminDashbaordPage() {
                 const res = await manageBlock({_id,status}).unwrap()
                 if(res.success == true){
                     getUsers().unwrap().then((res)=>{
-                        setUsers(res.users)
+                        dispatch(setUsers(res.users))
                     })
                     toast.success('Successful')
                 }
@@ -31,7 +30,7 @@ function AdminDashbaordPage() {
     }
     useEffect(()=>{
          getUsers().unwrap().then((res)=>{
-            setUsers(res.users)
+            dispatch(setUsers(res.users))
          })
     },[])
 
@@ -54,7 +53,7 @@ function AdminDashbaordPage() {
                 </tr>
             </thead>
             <tbody>
-                { users ? users.map((user,i)=>{
+              { users? users.map((user,i)=>{
                     return (<tr key={user._id} >
                         <td>{i+1}</td>
                         <td>{user.name}</td>

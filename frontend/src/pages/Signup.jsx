@@ -26,7 +26,13 @@ function Signup() {
     },[userInfo, navigate])
     const submitHandler = async(e) =>{
         e.preventDefault()
-        if(password !== confirmPassword){
+        if(!name.match(/^[a-z][a-z ]{2,10}/i)){
+            toast.error('Enter proper name')
+        }else if(!email.match(/^[a-z0-9._]+@[a-z0-9.]+\.[a-z]{2,}$/i)){
+            toast.error('Enter proper email')
+        }else if(!password.trim().match(/^.{4,}/i)){
+            toast.error('Password at least 4 characters')
+        }else if(password !== confirmPassword){
             toast.error('Passwords do not match')
         }else{
             try {
@@ -72,7 +78,7 @@ function Signup() {
 
             <Row>
                 <Col  className='text-center'>
-                   Already have an account?<Link to='/login' >LogIn</Link>
+                   Already have an account?<Link to='/' >LogIn</Link>
                 </Col>
             </Row>
         </Form>

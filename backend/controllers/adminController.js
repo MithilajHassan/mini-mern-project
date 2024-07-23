@@ -20,7 +20,16 @@ const adminLogin = asyncHandler(async (req,res)=>{
 })
 
 const adminDashboard = asyncHandler(async (req,res)=>{
-    const users = await User.find({isAdmin:false})
+    let search = ''
+    if(req.query.search){
+        search = req.query.search
+    }
+    const users = await User.find({isAdmin:false,
+        $or:[
+            {name:{ $regex:`^${search}` , $options:'i' }},
+            {email:{ $regex:`^${search}` , $options:'i' }}
+        ]
+    })
     res.status(200).json({users})
 })
 

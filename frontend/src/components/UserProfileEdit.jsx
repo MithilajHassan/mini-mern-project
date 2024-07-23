@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import FormContainer from './FormContainer'
 import { Button, Form,} from 'react-bootstrap'
 import Header from './Header'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { toast ,ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { useDispatch, useSelector } from 'react-redux'
@@ -44,16 +44,21 @@ function userProfileEdit() {
                     const storageRef = ref(firebaseStore,`/image/${image.name}`)
                     const snapshot = await uploadBytes(storageRef, image)
                     imageUrl = await getDownloadURL(snapshot.ref)
-                    console.log(imageUrl)
                 }
-                const res = await updateProfile({
-                     _id:userInfo._id,
-                     name, 
-                     email,
-                     image:imageUrl
-                    }).unwrap()
-                dispatch(setCredentials({ ...res }))
-                navigate('/profile')
+                if(!name.match(/^[a-z][a-z ]{2,10}/i)){
+                    toast.error('Enter proper name')
+                }else if(!email.match(/^[a-z0-9._]+@[a-z0-9.]+\.[a-z]{2,}$/i)){
+                    toast.error('Enter proper email')
+                }else {
+                    const res = await updateProfile({
+                        _id:userInfo._id,
+                        name, 
+                        email,
+                        image:imageUrl
+                       }).unwrap()
+                    dispatch(setCredentials({ ...res }))
+                    navigate('/profile')
+                }
             } catch (err) {
                 toast.error(err?.data?.message || err.error)
                 console.log(err.message)

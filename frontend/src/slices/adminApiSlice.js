@@ -12,10 +12,16 @@ const adminApiSlice = apiSlice.injectEndpoints({
             })
         }),
         dashboard:builder.mutation({
-            query:()=>({
-                url:`${ADMIN_URL}/dashboard`,
-                method:'GET',
-            })
+            query:(data)=>{
+                let url = `${ADMIN_URL}/dashboard`
+                if(data){
+                    url = `${ADMIN_URL}/dashboard?search=${data.search}`
+                }
+                return {
+                    url,
+                    method:'GET',
+                }
+            }
         }),
         manageBlock:builder.mutation({
             query:(data)=>({

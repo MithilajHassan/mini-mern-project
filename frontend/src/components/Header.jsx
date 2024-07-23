@@ -35,13 +35,11 @@ function Header() {
             <Navbar.Collapse id="responsive-navbar-nav">
             
             <Nav className='ms-auto'>
-              {userInfo ? (
+              {userInfo && (
                 <>
                   <Nav.Link><FaUserCircle />{userInfo.name}</Nav.Link>
                   <Nav.Link onClick={ logoutHandler } ><LuLogOut />Logout</Nav.Link>
                 </>
-              ) : (
-                <LinkContainer to='/login' ><Nav.Link><LuLogIn/>Login</Nav.Link></LinkContainer>
               )}
             
             
